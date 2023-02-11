@@ -2,7 +2,19 @@
 
 `pandoc -s --toc tp2.md --css=./github-pandoc.css -o tp2.html`
 
+## Questions de cours
 
+La partie du code d'Alice exécuté en parallèle représente en temps de traitement 90% du temps en séquentiel.
+
+Quelle est l'accélération maximale que pourra obtenir Alice avec son code ? (n>>1)
+
+Le meilleur *Speedup* est : $S(n) = \frac{n}{1+(n-1)f} \rightarrow \frac{1}{f}$
+
+Avec f la fraction du code non parallélisable.
+
+Dans le cas d'Alice, f = 0.9, alors $\frac{1}{f} = \frac{1}{0.9} = 1.11$
+
+Alors, l'accélération maximale que pourra obtenir Alice est de 1.11
 
 
 

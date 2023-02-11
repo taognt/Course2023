@@ -59,7 +59,45 @@ int main( int nargs, char* argv[] )
 	fileName << "Output" << std::setfill('0') << std::setw(5) << rank << ".txt";
 	std::ofstream output( fileName.str().c_str() );
 
+	
+
 	// Rajout de code....
+	// rank 0 est le maitre
+	int nb_sample = 10;
+	// PAS BESOIN DE MAITRE : UTILISER GATHER !
+	//
+	if (rank == 0)
+    {   
+        int count_task = 0;
+        for (int i=1; i<nbp; i++){
+            MPI_send(&count_task, 1, MPI_INT, tag, globCom);
+            count_task+=1;
+        }
+
+        while(count_task<nb_sample){
+            //Status contient le numero du processus ayant envoyé le resultat
+            MPI_recv(result, 1, MPI_INT, MPI_ANY_SOURCE, MPI_ANY_TAG, globCom, &status);
+            MPI_send(&count_task, 1, MPI_INT, status.MPI_SOURCE, MPI_ANY_TAG, globCom);
+            count_task+=1;
+        }
+        // On envoie un signal de terminaison a tous les processus
+        count_task = -1;
+        for(int i=1; i<nbp; i++) MPI_send(&count_task, 1, MPI_INT, i, MPI_ANY_TAG, globCom, &status);
+    }
+
+	// esclaves :
+	if(rank>0){
+        int num_task = 0;
+        // Tant que numero de terminason non reçu:
+        while(num_task !=-1){
+            MPI_recv(&num_task, 1, MPI_INT, 0, MPI_ANY_TAG, globCom, &status);
+            if(num_task >=0){
+                //Tache correspondant au numero
+                //execute_task(num_task, ...)
+                MPI_send(result, 1, MPI_INT, 0, MPI_ANY_TAG, globCom);
+            }
+        }
+    }
 
 	output.close();
 	// A la fin du programme, on doit synchroniser une dernière fois tous les processus

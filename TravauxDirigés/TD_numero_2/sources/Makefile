@@ -1,6 +1,7 @@
 #include Make.inc
-include Make_msys2.inc
+#include Make_msys2.inc
 #include Make_osx.inc
+include Make_linux.inc
 
 CXXFLAGS = -std=c++11 -fPIC
 ifdef DEBUG
